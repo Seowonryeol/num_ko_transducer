@@ -6,7 +6,7 @@ ex) 3 -> 삼, 43 -> 사십삼, 1211 ->천이백십일
 
 """
 
-
+#숫자 - 한글 변환 테이블
 num_to_ko_table={1:"일",2:"이",3:"삼",4:"사",5:"오",6:"육",7:"칠",8:"팔",9:"구"}
 
 def num_to_ko (num:int) -> str :
@@ -20,6 +20,7 @@ def num_to_ko (num:int) -> str :
   else:
     is_minus=False
   
+  #억, 만 단위별 숫자 할당 ex 9999억 9999만 9999 [9999, 9999, 9999]
   millions_part= num//100000000
   thousands_part= (num//10000)%10000
   hundreds_part=num%10000
@@ -33,15 +34,26 @@ def num_to_ko (num:int) -> str :
       ten_value=(part[0]//10)%10 
       one_value=part[0]%10
 
+    #천,백,십의 자리숫자가 1일 경우 일 생략 (ex. 일천 -> 천)
       if thousand_value !=0 :
-        part[1]+=num_to_ko_table[thousand_value]+"천"
+        if thousand_value==1:
+          part[1]+="천"
+        else:  
+          part[1]+=num_to_ko_table[thousand_value]+"천"
       if hundred_value !=0 :
-        part[1]+=num_to_ko_table[hundred_value]+"백"
+        if hundred_value==1:
+          part[1]+="백"
+        else:  
+          part[1]+=num_to_ko_table[hundred_value]+"백"
       if ten_value !=0 :
-        part[1]+=num_to_ko_table[ten_value]+"십"
+        if ten_value==1:
+          part[1]+="십"
+        else:
+          part[1]+=num_to_ko_table[ten_value]+"십"
       if one_value !=0 :
         part[1]+=num_to_ko_table[one_value]
 
+#각 부분별 최종 단위 추가 후 문자열 병합
   if part_values_and_strs["millions_part"][1]!="":
     part_values_and_strs["millions_part"][1]+="억"
   if part_values_and_strs["thousands_part"][1]!="":
@@ -49,8 +61,13 @@ def num_to_ko (num:int) -> str :
   if is_minus : part_values_and_strs["millions_part"][1]="마이너스 " +part_values_and_strs["millions_part"][1]
   return part_values_and_strs["millions_part"][1] + " "+ part_values_and_strs["thousands_part"][1]+ " " + part_values_and_strs["hundreds_part"][1]
 
-while(1):
-  num=int(input("한글 변환을 원하는 숫자를 입력하세요 : "))
-  ko_num=num_to_ko(num)
-
-  print(f"{num}을 한글변환한 결과는 {ko_num}입니다. 프로그램 종료를 원하시면 Ctrl+C를 눌러주세요. ")
+while True:
+  #예외 처리
+  try:
+    num=int(input("한글 변환을 원하는 숫자를 입력하세요 : "))
+    ko_num=num_to_ko(num)
+    print(f"{num}을 한글변환한 결과는 {ko_num}입니다. 프로그램 종료를 원하시면 Ctrl+C를 눌러주세요. ")
+  except ValueError:
+    print("잘못된 입력")
+  except KeyboardInterrupt:
+    print("프로그램 중단")
